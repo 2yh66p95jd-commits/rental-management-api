@@ -80,6 +80,14 @@ public class LeasesController : ControllerBase
         if (tenant == null)
             return BadRequest("Tenant does not exist.");
 
+        var existingActiveLease = await _context.Leases
+            .AnyAsync(l =>
+                l.PropertyId == dto.PropertyId &&
+                l.Status == "Active");
+
+        if (existingActiveLease)
+            return BadRequest("Property already has an active lease.");
+
         if (!property.IsAvailable)
             return BadRequest("Property is not available.");
 
