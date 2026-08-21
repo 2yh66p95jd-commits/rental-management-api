@@ -22,16 +22,23 @@ public async Task<IActionResult> GetSummary()
     var totalProperties = await _context.Properties.CountAsync();
 
     var occupiedProperties = await _context.Properties
-        .CountAsync(p => !p.IsAvailable);
+                .CountAsync(p => _context.Leases.Any(l =>
+                    l.PropertyId == p.Id &&
+                    l.Status == "Active"));
 
     var activeLeases = await _context.Leases
         .CountAsync(l => l.Status == "Active");
+
+    var paymentsThisMonth = await _context.Payments
+        .Where(p => p.Status == "Paid")
+        .SumAsync(p => p.Amount);
 
     return Ok(new
     {
         totalProperties,
         occupiedProperties,
-        activeLeases
+        activeLeases,
+        paymentsThisMonth
     });
 }
 }
