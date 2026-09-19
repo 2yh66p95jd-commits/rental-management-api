@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { formatCurrency } from '../utils/format'
 
 interface DashboardSummary {
   totalProperties: number
@@ -34,12 +35,6 @@ onMounted(async () => {
     loading.value = false
   }
 })
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('en-ZA', {
-    style: 'currency',
-    currency: 'ZAR'
-  }).format(value)
 </script>
 
 <template>
